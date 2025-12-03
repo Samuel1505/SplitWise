@@ -91,7 +91,7 @@ contract SplitWise {
         address indexed from,
         address indexed to,
         address indexed fromToken,
-        address indexed toToken,
+        address toToken,
         uint256 fromAmount,
         uint256 toAmount,
         uint256 groupId
