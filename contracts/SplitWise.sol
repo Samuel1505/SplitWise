@@ -87,6 +87,16 @@ contract SplitWise {
         uint256 groupId
     );
     
+    event CrossTokenPaymentSettled(
+        address indexed from,
+        address indexed to,
+        address indexed fromToken,
+        address indexed toToken,
+        uint256 fromAmount,
+        uint256 toAmount,
+        uint256 groupId
+    );
+    
     // ============ Modifiers ============
     
     modifier onlyGroupMember(uint256 groupId) {
@@ -281,6 +291,83 @@ contract SplitWise {
         totalBalances[to][token] += int256(amount);
         
         emit PaymentSettled(msg.sender, to, token, amount, groupId);
+    }
+    
+    /**
+     * @notice Settle a payment using a different token (cross-token settlement)
+     * @dev Useful for cross-chain scenarios where users hold different tokens
+     * @param groupId ID of the group
+     * @param owedToken Token that is owed (original expense token)
+     * @param paymentToken Token being used to pay (can be different)
+     * @param owedAmount Amount owed in the owedToken
+     * @param paymentAmount Amount being paid in paymentToken (must be approved/converted)
+     * @param to Address to pay to (the person who is owed)
+     * @param conversionRate Rate for conversion (paymentAmount * conversionRate / 1e18 = owedAmount equivalent)
+     * @notice The conversion rate should be provided by an oracle or DEX. Format: 1e18 = 1:1 ratio
+     */
+    function settlePaymentCrossToken(
+        uint256 groupId,
+        address owedToken,
+        address paymentToken,
+        uint256 owedAmount,
+        uint256 paymentAmount,
+        address to,
+        uint256 conversionRate
+    ) external payable validGroup(groupId) onlyGroupMember(groupId) {
+        require(owedAmount > 0, "SplitWise: owed amount must be positive");
+        require(paymentAmount > 0, "SplitWise: payment amount must be positive");
+        require(to != address(0), "SplitWise: invalid recipient");
+        require(to != msg.sender, "SplitWise: cannot pay yourself");
+        require(groups[groupId].isMember[to], "SplitWise: recipient not in group");
+        require(owedToken != paymentToken, "SplitWise: use settlePayment for same token");
+        require(conversionRate > 0, "SplitWise: invalid conversion rate");
+        
+        int256 currentBalance = balances[msg.sender][groupId][owedToken];
+        require(currentBalance > 0, "SplitWise: no balance to settle");
+        require(uint256(currentBalance) >= owedAmount, "SplitWise: insufficient balance");
+        
+        // Verify conversion: paymentAmount * conversionRate / 1e18 should equal owedAmount
+        // We allow some flexibility for rounding, but require it to be within 1% tolerance
+        uint256 convertedAmount = (paymentAmount * conversionRate) / 1e18;
+        require(
+            convertedAmount >= owedAmount * 99 / 100 && convertedAmount <= owedAmount * 101 / 100,
+            "SplitWise: conversion rate mismatch"
+        );
+        
+        // Transfer payment token
+        if (paymentToken == address(0)) {
+            // Native ETH
+            require(msg.value >= paymentAmount, "SplitWise: insufficient ETH sent");
+            (bool success, ) = payable(to).call{value: paymentAmount}("");
+            require(success, "SplitWise: ETH transfer failed");
+            
+            // Refund excess
+            if (msg.value > paymentAmount) {
+                (success, ) = payable(msg.sender).call{value: msg.value - paymentAmount}("");
+                require(success, "SplitWise: refund failed");
+            }
+        } else {
+            // ERC20 token
+            require(msg.value == 0, "SplitWise: ETH sent for token payment");
+            IERC20(paymentToken).transferFrom(msg.sender, to, paymentAmount);
+        }
+        
+        // Update balances - clear the owed token balance, recipient receives payment token
+        balances[msg.sender][groupId][owedToken] -= int256(owedAmount);
+        balances[to][groupId][paymentToken] += int256(paymentAmount);
+        
+        totalBalances[msg.sender][owedToken] -= int256(owedAmount);
+        totalBalances[to][paymentToken] += int256(paymentAmount);
+        
+        emit CrossTokenPaymentSettled(
+            msg.sender,
+            to,
+            paymentToken,
+            owedToken,
+            paymentAmount,
+            owedAmount,
+            groupId
+        );
     }
     
     /**
