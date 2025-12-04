@@ -1,11 +1,12 @@
-import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { Contract } from "ethers";
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 /**
  * Helper functions for SplitWise tests
  */
 export class TestHelpers {
   static async deployMockERC20(
+    ethers: any,
     deployer: HardhatEthersSigner,
     name: string = "Test Token",
     symbol: string = "TEST",
@@ -16,7 +17,10 @@ export class TestHelpers {
     return await MockERC20.deploy(name, symbol, decimals, initialSupply);
   }
 
-  static async deploySplitWise(deployer: HardhatEthersSigner): Promise<Contract> {
+  static async deploySplitWise(
+    ethers: any,
+    deployer: HardhatEthersSigner
+  ): Promise<Contract> {
     const SplitWise = await ethers.getContractFactory("SplitWise", deployer);
     return await SplitWise.deploy();
   }
@@ -46,17 +50,14 @@ export class TestHelpers {
     return events;
   }
 
-  static randomAddress(): string {
+  static randomAddress(ethers: any): string {
     return ethers.Wallet.createRandom().address;
   }
 
-  static randomAmount(min: bigint = 1n, max: bigint = ethers.parseEther("1000")): bigint {
+  static randomAmount(ethers: any, min: bigint = 1n, max: bigint = ethers.parseEther("1000")): bigint {
     const range = max - min;
     const random = BigInt(Math.floor(Math.random() * Number(range)));
     return min + random;
   }
 }
-
-// Import ethers for use in helpers
-import { ethers } from "ethers";
 
