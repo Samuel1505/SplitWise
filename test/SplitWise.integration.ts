@@ -672,7 +672,7 @@ describe("SplitWise - Integration Tests", function () {
       const receipt2 = await tx2.wait();
 
       // Calculate gas cost
-      const gasUsed = receipt2.gasUsed * receipt2.gasPrice;
+      const gasUsed = BigInt(receipt2.gasUsed.toString()) * receipt2.gasPrice;
 
       // Check final balance (should have excess refunded, minus gas)
       const finalBalance = await ethers.provider.getBalance(await user1.getAddress());
