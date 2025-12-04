@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { network } from "hardhat";
-import { setupIntegrationTests, getGroupIdFromEvent } from "./fixtures";
+import { setupIntegrationTests, getGroupIdFromEvent } from "./fixtures.js";
 
 const { ethers } = await network.connect();
 
