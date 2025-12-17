@@ -1,4 +1,10 @@
+'use client';
+
+import { useAppKit } from '@reown/appkit/react';
+
 export default function Hero() {
+  const { open } = useAppKit();
+
   return (
     <section className="container mx-auto px-6 py-20 md:py-32">
       <div className="max-w-4xl mx-auto text-center">
@@ -22,7 +28,10 @@ export default function Hero() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform">
+          <button
+            onClick={() => open()}
+            className="px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform"
+          >
             Get Started
           </button>
           <button className="px-8 py-4 rounded-full border-2 border-zinc-300 dark:border-zinc-700 text-foreground font-semibold text-lg hover:border-blue-500 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all">

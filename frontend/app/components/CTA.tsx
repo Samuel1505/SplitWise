@@ -1,4 +1,12 @@
+'use client';
+
+import { useAccount } from 'wagmi';
+import { useAppKit } from '@reown/appkit/react';
+
 export default function CTA() {
+  const { isConnected } = useAccount();
+  const { open } = useAppKit();
+
   return (
     <section className="container mx-auto px-6 py-20">
       <div className="max-w-4xl mx-auto">
@@ -9,8 +17,11 @@ export default function CTA() {
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Connect your wallet and start creating groups, adding expenses, and settling payments on the blockchain.
           </p>
-          <button className="px-10 py-4 rounded-full bg-white text-blue-600 font-semibold text-lg hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform">
-            Connect Wallet & Get Started
+          <button
+            onClick={() => open()}
+            className="px-10 py-4 rounded-full bg-white text-blue-600 font-semibold text-lg hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform"
+          >
+            {isConnected ? 'Get Started' : 'Connect Wallet & Get Started'}
           </button>
         </div>
       </div>
