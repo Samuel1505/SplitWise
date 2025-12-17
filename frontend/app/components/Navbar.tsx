@@ -1,4 +1,22 @@
+'use client';
+
+import { useAccount, useDisconnect } from 'wagmi';
+import { useAppKit } from '@reown/appkit/react';
+import { formatAddress } from '../utils/format';
+
 export default function Navbar() {
+  const { address, isConnected } = useAccount();
+  const { open } = useAppKit();
+  const { disconnect } = useDisconnect();
+
+  const handleConnect = () => {
+    if (isConnected) {
+      disconnect();
+    } else {
+      open();
+    }
+  };
+
   return (
     <nav className="container mx-auto px-6 py-6">
       <div className="flex items-center justify-between">
@@ -12,8 +30,11 @@ export default function Navbar() {
           <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             How it works
           </button>
-          <button className="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl">
-            Connect Wallet
+          <button
+            onClick={handleConnect}
+            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+          >
+            {isConnected ? (address ? formatAddress(address) : 'Connected') : 'Connect Wallet'}
           </button>
         </div>
       </div>
