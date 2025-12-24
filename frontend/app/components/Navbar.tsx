@@ -21,10 +21,10 @@ export default function Navbar() {
     <nav className="container mx-auto px-6 py-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center">
             <span className="text-white font-bold text-xl">$</span>
           </div>
-          <span className="text-2xl font-bold text-foreground">SplitWise</span>
+          <span className="text-2xl font-bold text-zinc-900 dark:text-white">SplitWise</span>
         </div>
         <div className="flex items-center gap-4">
           <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -32,7 +32,7 @@ export default function Navbar() {
           </button>
           <button
             onClick={handleConnect}
-            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:from-blue-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+            className="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
           >
             {isConnected ? (address ? formatAddress(address) : 'Connected') : 'Connect Wallet'}
           </button>
