@@ -10,7 +10,7 @@ export default function CTA() {
   return (
     <section className="container mx-auto px-6 py-20">
       <div className="max-w-4xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 p-12 md:p-16 text-center">
+        <div className="rounded-3xl bg-blue-600 p-12 md:p-16 text-center border-2 border-blue-700">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to split expenses the smart way?
           </h2>
@@ -19,7 +19,7 @@ export default function CTA() {
           </p>
           <button
             onClick={() => open()}
-            className="px-10 py-4 rounded-full bg-white text-blue-600 font-semibold text-lg hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform"
+            className="px-10 py-4 rounded-lg bg-white text-blue-600 font-semibold text-lg hover:bg-zinc-100 transition-all shadow-xl hover:shadow-2xl"
           >
             {isConnected ? 'Get Started' : 'Connect Wallet & Get Started'}
           </button>
